@@ -365,8 +365,8 @@
 <div class="content actief" id="tab-zoeken">
   <div class="criteria-balk">
     <div class="criterium">
-      <label>Max. prijs</label>
-      <span>€ 330.000</span>
+      <label>Prijs</label>
+      <span>€200k–€335k</span>
     </div>
     <div class="criterium">
       <label>Slaapkamers</label>
@@ -408,21 +408,21 @@
       <div class="link-rij-naam">Pararius</div>
       <div class="link-rij-sub">Beverwijk · max €330k</div>
     </div>
-    <a class="open-link" href="https://www.pararius.nl/koopwoningen/beverwijk/0-330000/2-slaapkamers" target="_blank">Openen →</a>
+    <a class="open-link" href="https://www.pararius.nl/koopwoningen/beverwijk/200000-335000/2-slaapkamers" target="_blank">Openen →</a>
   </div>
   <div class="link-rij">
     <div>
       <div class="link-rij-naam">Jaap.nl</div>
       <div class="link-rij-sub">Noord-Holland · max €330k</div>
     </div>
-    <a class="open-link" href="https://www.jaap.nl/koophuizen/noord-holland/?prijs_tot=330000&kamers_min=3" target="_blank">Openen →</a>
+    <a class="open-link" href="https://www.jaap.nl/koophuizen/noord-holland/?prijs_van=200000&prijs_tot=335000&kamers_min=3" target="_blank">Openen →</a>
   </div>
   <div class="link-rij">
     <div>
       <div class="link-rij-naam">Huislijn.nl</div>
       <div class="link-rij-sub">Regio Kennemerland · koop</div>
     </div>
-    <a class="open-link" href="https://www.huislijn.nl/koopwoning/nederland/provincie-noord-holland?prijsmax=330000&kamersmin=3" target="_blank">Openen →</a>
+    <a class="open-link" href="https://www.huislijn.nl/koopwoning/nederland/provincie-noord-holland?prijsmin=200000&prijsmax=335000&kamersmin=3" target="_blank">Openen →</a>
   </div>
   <div class="link-rij">
     <div>
@@ -460,7 +460,7 @@
 Ik zoek in Beverwijk, Heemskerk, Castricum, Velsen of Uitgeest.
 
 Criteria:
-- Maximaal € 330.000
+- Tussen € 200.000 en € 335.000
 - Minimaal 2 slaapkamers
 - Kindvriendelijke buurt
 - Parkeren mogelijk
@@ -476,7 +476,7 @@ Als je iets voorbij ziet komen, stuur me dan meteen de link door. Dank je wel!</
   <div class="sectie-titel">Over deze app</div>
   <div class="info-blok">
     <h3>Zoeken-tab</h3>
-    <p>Opent Funda direct met jouw criteria: max €330.000, minimaal 2 slaapkamers, koopwoning. Je kunt per gebied zoeken of alles tegelijk openen.</p>
+    <p>Opent Funda direct met jouw criteria: €200.000–€335.000, minimaal 2 slaapkamers, koopwoning. Je kunt per gebied zoeken of alles tegelijk openen.</p>
   </div>
   <div class="info-blok">
     <h3>Directe links</h3>
@@ -491,7 +491,7 @@ Als je iets voorbij ziet komen, stuur me dan meteen de link door. Dank je wel!</
     <p>Via GitHub Actions ontvang je elke ochtend om 07:00 een e-mail met nieuwe woningen. Dit is al ingesteld in je repository <strong>koopwoningzoeker</strong>.</p>
   </div>
   <hr>
-  <p style="font-size:0.75rem;color:var(--tekst-zacht);text-align:center;">Koopwoningzoeker Frank · max. €330.000 · min. 2 slaapkamers</p>
+  <p style="font-size:0.75rem;color:var(--tekst-zacht);text-align:center;">Koopwoningzoeker Frank · €200k–€335k · min. 2 slaapkamers</p>
 </div>
 
 <script>
@@ -517,7 +517,7 @@ function toggleChip(el) {
 }
 
 function bouwFundaUrl(gebied, datum) {
-  return `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${gebied}%22%5D&price_max=330000&bedrooms_min=2${datum ? '&publication_date=1' : ''}`;
+  return `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${gebied}%22%5D&price_min=200000&price_max=335000&bedrooms_min=2${datum ? '&publication_date=1' : ''}`;
 }
 
 function zoekFunda() {
@@ -531,9 +531,9 @@ function zoekAlles() {
   const actief = GEBIEDEN.filter(g => actieveGebieden.has(g));
   if (!actief.length) { toonAlert('alert-zoeken', 'Selecteer minimaal één gebied.', 'info'); return; }
   const urls = [
-    `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${actief.join('%22%2C%22')}%22%5D&price_max=330000&bedrooms_min=2&publication_date=1`,
-    `https://www.pararius.nl/koopwoningen/${actief[0]}/0-330000/2-slaapkamers`,
-    `https://www.jaap.nl/koophuizen/noord-holland/?prijs_tot=330000&kamers_min=3`
+    `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${actief.join('%22%2C%22')}%22%5D&price_min=200000&price_max=335000&bedrooms_min=2&publication_date=1`,
+    `https://www.pararius.nl/koopwoningen/${actief[0]}/200000-335000/2-slaapkamers`,
+    `https://www.jaap.nl/koophuizen/noord-holland/?prijs_van=200000&prijs_tot=335000&kamers_min=3`
   ];
   urls.forEach((u, i) => setTimeout(() => window.open(u, '_blank'), i * 400));
 }
@@ -557,14 +557,14 @@ function renderFundaLinks() {
   GEBIEDEN.forEach(g => {
     const d = document.createElement('div');
     d.className = 'link-rij';
-    d.innerHTML = `<div><div class="link-rij-naam">${NAMEN[g]}</div><div class="link-rij-sub">Funda · max €330k · min. 2 slpk</div></div><a class="open-link" href="${bouwFundaUrl(g, true)}" target="_blank">Openen →</a>`;
+    d.innerHTML = `<div><div class="link-rij-naam">${NAMEN[g]}</div><div class="link-rij-sub">Funda · €200k–€335k · min. 2 slpk</div></div><a class="open-link" href="${bouwFundaUrl(g, true)}" target="_blank">Openen →</a>`;
     c.appendChild(d);
   });
 }
 
 function kopieerFundaLink() {
   const actief = GEBIEDEN.filter(g => actieveGebieden.has(g));
-  const url = `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${actief.join('%22%2C%22')}%22%5D&price_max=330000&bedrooms_min=2&publication_date=1`;
+  const url = `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${actief.join('%22%2C%22')}%22%5D&price_min=200000&price_max=335000&bedrooms_min=2&publication_date=1`;
   navigator.clipboard.writeText(url).then(() => toonAlert('alert-zoeken', 'Link gekopieerd!', 'succes'));
 }
 
