@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koopwoningzoeker — Frank</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --groen: #1a6b4a;
+    --groen-licht: #e8f5ef;
+    --groen-mid: #2d9467;
+    --tekst: #1a1a18;
+    --tekst-zacht: #5a5a54;
+    --rand: #e2e0d8;
+    --achtergrond: #f7f5f0;
+    --wit: #ffffff;
+    --amber: #b45309;
+    --amber-licht: #fef3c7;
+    --rood: #991b1b;
+    --rood-licht: #fee2e2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--achtergrond);
+    color: var(--tekst);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--groen);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .header-left p {
+    font-size: 0.72rem;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+  .badge-update {
+    font-size: 0.7rem;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--wit);
+    border-bottom: 1px solid var(--rand);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--tekst-zacht);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .tab:hover { color: var(--groen); }
+  .tab.actief {
+    color: var(--groen);
+    border-bottom-color: var(--groen);
+  }
+
+  /* CONTENT */
+  .content { display: none; padding: 1rem 1rem 5rem; max-width: 680px; margin: 0 auto; }
+  .content.actief { display: block; }
+
+  /* CRITERIA BALK */
+  .criteria-balk {
+    background: var(--wit);
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  .criterium label {
+    font-size: 0.68rem;
+    color: var(--tekst-zacht);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .criterium span {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--groen);
+  }
+
+  /* SECTIE TITEL */
+  .sectie-titel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--tekst-zacht);
+    margin: 1.25rem 0 0.6rem;
+  }
+
+  /* GEBIED CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+  .chip {
+    background: var(--groen-licht);
+    color: var(--groen);
+    border: 1px solid #a7d4bc;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chip:hover { background: #c8e8d8; }
+  .chip.uit {
+    background: var(--achtergrond);
+    color: var(--tekst-zacht);
+    border-color: var(--rand);
+  }
+
+  /* KNOPPEN */
+  .btn-primair {
+    display: block;
+    width: 100%;
+    background: var(--groen);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-decoration: none;
+  }
+  .btn-primair:hover { background: #145538; }
+  .btn-secundair {
+    display: block;
+    width: 100%;
+    background: var(--wit);
+    color: var(--tekst);
+    border: 1px solid var(--rand);
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-decoration: none;
+  }
+  .btn-secundair:hover { background: var(--achtergrond); }
+
+  /* WONINGKAART */
+  .woningkaart {
+    background: var(--wit);
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: box-shadow 0.15s;
+  }
+  .woningkaart:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .woningkaart-info { flex: 1; }
+  .woningkaart-prijs { font-size: 1rem; font-weight: 600; color: var(--groen); }
+  .woningkaart-adres { font-size: 0.82rem; color: var(--tekst-zacht); margin-top: 2px; }
+  .woningkaart-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .tag {
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--groen-licht);
+    color: var(--groen);
+  }
+  .tag.nieuw { background: var(--amber-licht); color: var(--amber); }
+  .open-link {
+    background: none;
+    border: 1px solid var(--rand);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    color: var(--tekst);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .open-link:hover { background: var(--achtergrond); }
+
+  /* FAVORIET STER */
+  .ster-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 4px;
+    line-height: 1;
+    filter: grayscale(1);
+    transition: filter 0.15s;
+  }
+  .ster-btn.actief { filter: grayscale(0); }
+
+  /* ALERT */
+  .alert {
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.83rem;
+    margin-bottom: 0.75rem;
+    display: none;
+  }
+  .alert.succes { background: var(--groen-licht); color: var(--groen); border: 1px solid #a7d4bc; }
+  .alert.info { background: var(--amber-licht); color: var(--amber); border: 1px solid #fcd34d; }
+
+  /* INFO BLOK */
+  .info-blok {
+    background: var(--wit);
+    border: 1px solid var(--rand);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.6rem;
+  }
+  .info-blok h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--tekst);
+  }
+  .info-blok p {
+    font-size: 0.8rem;
+    color: var(--tekst-zacht);
+    line-height: 1.6;
+  }
+
+  /* LINK RIJEN */
+  .link-rij {
+    background: var(--wit);
+    border: 1px solid var(--rand);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .link-rij-naam { font-size: 0.85rem; font-weight: 500; }
+  .link-rij-sub { font-size: 0.72rem; color: var(--tekst-zacht); margin-top: 1px; }
+
+  /* FAMILIE BERICHT */
+  .bericht-vak {
+    background: var(--achtergrond);
+    border: 1px solid var(--rand);
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--tekst-zacht);
+    white-space: pre-line;
+    margin-bottom: 0.75rem;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--wit);
+    border-top: 1px solid var(--rand);
+    display: flex;
+    z-index: 100;
+  }
+  .nav-knop {
+    flex: 1;
+    padding: 0.65rem 0.5rem 0.75rem;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--tekst-zacht);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    transition: color 0.15s;
+  }
+  .nav-knop .icon { font-size: 1.1rem; }
+  .nav-knop.actief { color: var(--groen); }
+
+  /* SCHEIDINGSLIJN */
+  hr { border: none; border-top: 1px solid var(--rand); margin: 1rem 0; }
+
+  /* LEGE STAAT */
+  .leeg {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--tekst-zacht);
+    font-size: 0.85rem;
+  }
+  .leeg .icoon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .content.actief > * { animation: fadeIn 0.2s ease both; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Koopwoningzoeker</h1>
+    <p>Beverwijk · Heemskerk · Castricum · Velsen · Uitgeest</p>
+  </div>
+  <span class="badge-update" id="update-badge">Vandaag</span>
+</header>
+
+<div class="tabs">
+  <button class="tab actief" onclick="toonTab('zoeken', this)">Zoeken</button>
+  <button class="tab" onclick="toonTab('links', this)">Directe links</button>
+  <button class="tab" onclick="toonTab('favorieten', this)">Favorieten</button>
+  <button class="tab" onclick="toonTab('familie', this)">Familie</button>
+  <button class="tab" onclick="toonTab('info', this)">Info</button>
+</div>
+
+<!-- TAB: ZOEKEN -->
+<div class="content actief" id="tab-zoeken">
+  <div class="criteria-balk">
+    <div class="criterium">
+      <label>Max. prijs</label>
+      <span>€ 330.000</span>
+    </div>
+    <div class="criterium">
+      <label>Slaapkamers</label>
+      <span>Min. 2</span>
+    </div>
+    <div class="criterium">
+      <label>Type</label>
+      <span>Koop</span>
+    </div>
+  </div>
+
+  <div class="sectie-titel">Gebieden</div>
+  <div class="chips" id="chips">
+    <span class="chip" data-gebied="beverwijk" onclick="toggleChip(this)">Beverwijk</span>
+    <span class="chip" data-gebied="heemskerk" onclick="toggleChip(this)">Heemskerk</span>
+    <span class="chip" data-gebied="castricum" onclick="toggleChip(this)">Castricum</span>
+    <span class="chip" data-gebied="velsen" onclick="toggleChip(this)">Velsen</span>
+    <span class="chip" data-gebied="uitgeest" onclick="toggleChip(this)">Uitgeest</span>
+  </div>
+
+  <div id="alert-zoeken" class="alert"></div>
+
+  <button class="btn-primair" onclick="zoekFunda()">Zoek op Funda (vandaag)</button>
+  <button class="btn-secundair" onclick="zoekAlles()">Zoek op alle sites tegelijk</button>
+
+  <div class="sectie-titel">Snel per gebied openen</div>
+  <div id="gebied-links"></div>
+</div>
+
+<!-- TAB: DIRECTE LINKS -->
+<div class="content" id="tab-links">
+  <div class="sectie-titel">Funda — per gebied</div>
+  <div id="funda-links"></div>
+
+  <div class="sectie-titel">Andere platforms</div>
+
+  <div class="link-rij">
+    <div>
+      <div class="link-rij-naam">Pararius</div>
+      <div class="link-rij-sub">Beverwijk · max €330k</div>
+    </div>
+    <a class="open-link" href="https://www.pararius.nl/koopwoningen/beverwijk/0-330000/2-slaapkamers" target="_blank">Openen →</a>
+  </div>
+  <div class="link-rij">
+    <div>
+      <div class="link-rij-naam">Jaap.nl</div>
+      <div class="link-rij-sub">Noord-Holland · max €330k</div>
+    </div>
+    <a class="open-link" href="https://www.jaap.nl/koophuizen/noord-holland/?prijs_tot=330000&kamers_min=3" target="_blank">Openen →</a>
+  </div>
+  <div class="link-rij">
+    <div>
+      <div class="link-rij-naam">Huislijn.nl</div>
+      <div class="link-rij-sub">Regio Kennemerland · koop</div>
+    </div>
+    <a class="open-link" href="https://www.huislijn.nl/koopwoning/nederland/provincie-noord-holland?prijsmax=330000&kamersmin=3" target="_blank">Openen →</a>
+  </div>
+  <div class="link-rij">
+    <div>
+      <div class="link-rij-naam">NVM Open Huizen</div>
+      <div class="link-rij-sub">Bezichtigingen in de regio</div>
+    </div>
+    <a class="open-link" href="https://www.nvm.nl/open-huizendag/" target="_blank">Openen →</a>
+  </div>
+
+  <div class="sectie-titel">Zoekopdracht kopiëren</div>
+  <button class="btn-secundair" onclick="kopieerFundaLink()">Kopieer Funda-zoekopdracht</button>
+</div>
+
+<!-- TAB: FAVORIETEN -->
+<div class="content" id="tab-favorieten">
+  <div class="sectie-titel">Opgeslagen woningen</div>
+  <div id="favorieten-lijst"></div>
+
+  <div class="sectie-titel">Woning toevoegen</div>
+  <div class="info-blok">
+    <h3>Handmatig opslaan</h3>
+    <p>Plak een Funda-link hieronder om een woning op te slaan in je favorieten.</p>
+  </div>
+  <input type="url" id="fav-url" placeholder="https://www.funda.nl/detail/koop/..." style="width:100%;padding:0.75rem 1rem;border:1px solid var(--rand);border-radius:10px;font-size:0.85rem;font-family:'DM Sans',sans-serif;margin-bottom:0.5rem;background:var(--wit);">
+  <input type="text" id="fav-naam" placeholder="Omschrijving (bijv. Hoekwoning Heemskerk)" style="width:100%;padding:0.75rem 1rem;border:1px solid var(--rand);border-radius:10px;font-size:0.85rem;font-family:'DM Sans',sans-serif;margin-bottom:0.5rem;background:var(--wit);">
+  <button class="btn-primair" onclick="slaFavorietOp()">Opslaan als favoriet</button>
+  <div id="alert-fav" class="alert"></div>
+</div>
+
+<!-- TAB: FAMILIE -->
+<div class="content" id="tab-familie">
+  <div class="sectie-titel">Bericht doorsturen</div>
+  <div class="bericht-vak" id="familie-bericht">Hoi! Zou je met me mee willen kijken naar een koopwoning?
+
+Ik zoek in Beverwijk, Heemskerk, Castricum, Velsen of Uitgeest.
+
+Criteria:
+- Maximaal € 330.000
+- Minimaal 2 slaapkamers
+- Kindvriendelijke buurt
+- Parkeren mogelijk
+
+Als je iets voorbij ziet komen, stuur me dan meteen de link door. Dank je wel!</div>
+  <button class="btn-primair" onclick="kopieerBericht()">Kopieer bericht</button>
+  <button class="btn-secundair" onclick="deelApp()">Deel deze app</button>
+  <div id="alert-familie" class="alert"></div>
+</div>
+
+<!-- TAB: INFO -->
+<div class="content" id="tab-info">
+  <div class="sectie-titel">Over deze app</div>
+  <div class="info-blok">
+    <h3>Zoeken-tab</h3>
+    <p>Opent Funda direct met jouw criteria: max €330.000, minimaal 2 slaapkamers, koopwoning. Je kunt per gebied zoeken of alles tegelijk openen.</p>
+  </div>
+  <div class="info-blok">
+    <h3>Directe links</h3>
+    <p>Vaste links naar Funda, Pararius, Jaap en Huislijn — altijd klaar om te openen. Gebruik dit als dagelijks startpunt.</p>
+  </div>
+  <div class="info-blok">
+    <h3>Favorieten</h3>
+    <p>Sla woningen op die je interessant vindt. Ze worden lokaal opgeslagen in je browser zodat je ze altijd terug kunt vinden.</p>
+  </div>
+  <div class="info-blok">
+    <h3>Dagelijks e-mailalert</h3>
+    <p>Via GitHub Actions ontvang je elke ochtend om 07:00 een e-mail met nieuwe woningen. Dit is al ingesteld in je repository <strong>koopwoningzoeker</strong>.</p>
+  </div>
+  <hr>
+  <p style="font-size:0.75rem;color:var(--tekst-zacht);text-align:center;">Koopwoningzoeker Frank · max. €330.000 · min. 2 slaapkamers</p>
+</div>
+
+<script>
+const GEBIEDEN = ['beverwijk','heemskerk','castricum','velsen','uitgeest'];
+const NAMEN = { beverwijk:'Beverwijk', heemskerk:'Heemskerk', castricum:'Castricum', velsen:'Velsen', uitgeest:'Uitgeest' };
+let actieveGebieden = new Set(GEBIEDEN);
+let favorieten = JSON.parse(localStorage.getItem('koop-favorieten') || '[]');
+
+function toonTab(naam, el) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('actief'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('actief'));
+  document.getElementById('tab-' + naam).classList.add('actief');
+  el.classList.add('actief');
+  if (naam === 'favorieten') renderFavorieten();
+  if (naam === 'links') renderFundaLinks();
+}
+
+function toggleChip(el) {
+  const g = el.dataset.gebied;
+  if (actieveGebieden.has(g)) { actieveGebieden.delete(g); el.classList.add('uit'); }
+  else { actieveGebieden.add(g); el.classList.remove('uit'); }
+  renderGebiedLinks();
+}
+
+function bouwFundaUrl(gebied, datum) {
+  return `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${gebied}%22%5D&price_max=330000&bedrooms_min=2${datum ? '&publication_date=1' : ''}`;
+}
+
+function zoekFunda() {
+  const actief = GEBIEDEN.filter(g => actieveGebieden.has(g));
+  if (!actief.length) { toonAlert('alert-zoeken', 'Selecteer minimaal één gebied.', 'info'); return; }
+  actief.forEach((g, i) => setTimeout(() => window.open(bouwFundaUrl(g, true), '_blank'), i * 300));
+  document.getElementById('update-badge').textContent = 'Net gezocht';
+}
+
+function zoekAlles() {
+  const actief = GEBIEDEN.filter(g => actieveGebieden.has(g));
+  if (!actief.length) { toonAlert('alert-zoeken', 'Selecteer minimaal één gebied.', 'info'); return; }
+  const urls = [
+    `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${actief.join('%22%2C%22')}%22%5D&price_max=330000&bedrooms_min=2&publication_date=1`,
+    `https://www.pararius.nl/koopwoningen/${actief[0]}/0-330000/2-slaapkamers`,
+    `https://www.jaap.nl/koophuizen/noord-holland/?prijs_tot=330000&kamers_min=3`
+  ];
+  urls.forEach((u, i) => setTimeout(() => window.open(u, '_blank'), i * 400));
+}
+
+function renderGebiedLinks() {
+  const c = document.getElementById('gebied-links');
+  c.innerHTML = '';
+  GEBIEDEN.filter(g => actieveGebieden.has(g)).forEach(g => {
+    const a = document.createElement('a');
+    a.className = 'btn-secundair';
+    a.href = bouwFundaUrl(g, true);
+    a.target = '_blank';
+    a.textContent = `Funda — ${NAMEN[g]}`;
+    c.appendChild(a);
+  });
+}
+
+function renderFundaLinks() {
+  const c = document.getElementById('funda-links');
+  c.innerHTML = '';
+  GEBIEDEN.forEach(g => {
+    const d = document.createElement('div');
+    d.className = 'link-rij';
+    d.innerHTML = `<div><div class="link-rij-naam">${NAMEN[g]}</div><div class="link-rij-sub">Funda · max €330k · min. 2 slpk</div></div><a class="open-link" href="${bouwFundaUrl(g, true)}" target="_blank">Openen →</a>`;
+    c.appendChild(d);
+  });
+}
+
+function kopieerFundaLink() {
+  const actief = GEBIEDEN.filter(g => actieveGebieden.has(g));
+  const url = `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${actief.join('%22%2C%22')}%22%5D&price_max=330000&bedrooms_min=2&publication_date=1`;
+  navigator.clipboard.writeText(url).then(() => toonAlert('alert-zoeken', 'Link gekopieerd!', 'succes'));
+}
+
+function slaFavorietOp() {
+  const url = document.getElementById('fav-url').value.trim();
+  const naam = document.getElementById('fav-naam').value.trim();
+  if (!url || !naam) { toonAlert('alert-fav', 'Vul beide velden in.', 'info'); return; }
+  favorieten.unshift({ url, naam, datum: new Date().toLocaleDateString('nl-NL') });
+  localStorage.setItem('koop-favorieten', JSON.stringify(favorieten));
+  document.getElementById('fav-url').value = '';
+  document.getElementById('fav-naam').value = '';
+  toonAlert('alert-fav', 'Opgeslagen!', 'succes');
+  renderFavorieten();
+}
+
+function verwijderFavoriet(i) {
+  favorieten.splice(i, 1);
+  localStorage.setItem('koop-favorieten', JSON.stringify(favorieten));
+  renderFavorieten();
+}
+
+function renderFavorieten() {
+  const c = document.getElementById('favorieten-lijst');
+  if (!favorieten.length) {
+    c.innerHTML = '<div class="leeg"><div class="icoon">★</div><p>Nog geen favorieten opgeslagen.<br>Voeg hieronder een woning toe.</p></div>';
+    return;
+  }
+  c.innerHTML = '';
+  favorieten.forEach((f, i) => {
+    const d = document.createElement('div');
+    d.className = 'woningkaart';
+    d.innerHTML = `<div class="woningkaart-info"><div class="woningkaart-prijs">${f.naam}</div><div class="woningkaart-adres">Opgeslagen op ${f.datum}</div></div><a class="open-link" href="${f.url}" target="_blank">Openen →</a><button class="open-link" onclick="verwijderFavoriet(${i})" style="margin-left:4px;">✕</button>`;
+    c.appendChild(d);
+  });
+}
+
+function kopieerBericht() {
+  const tekst = document.getElementById('familie-bericht').textContent;
+  navigator.clipboard.writeText(tekst).then(() => toonAlert('alert-familie', 'Bericht gekopieerd!', 'succes'));
+}
+
+function deelApp() {
+  if (navigator.share) {
+    navigator.share({ title: 'Koopwoningzoeker', url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => toonAlert('alert-familie', 'Link gekopieerd!', 'succes'));
+  }
+}
+
+function toonAlert(id, tekst, type) {
+  const el = document.getElementById(id);
+  el.textContent = tekst;
+  el.className = 'alert ' + type;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+// Init
+renderGebiedLinks();
+renderFundaLinks();
+document.getElementById('update-badge').textContent = new Date().toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' });
+</script>
+</body>
+</html>
