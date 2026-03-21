@@ -213,11 +213,11 @@ let actief = new Set(GEBIEDEN.map(g => g.slug));
 let favs   = JSON.parse(localStorage.getItem('koop-favs') || '[]');
 
 function fundaUrl(slug) {
-  return `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${slug}%22%5D&price_min=200000&price_max=350000&bedrooms_min=2&availability=%5B%22available%22%5D&publication_date=1&sort=%22date_down%22`;
+  return `https://www.funda.nl/zoeken/koop/?selected_area=%5B%22${slug}%22%5D&price=%22200000-350000%22&bedrooms_min=2&availability=%5B%22available%22%5D&publication_date=1&sort=%22date_down%22`;
 }
 function fundaAllesUrl() {
   const slugs = GEBIEDEN.filter(g => actief.has(g.slug)).map(g => `%22${g.slug}%22`).join('%2C');
-  return `https://www.funda.nl/zoeken/koop/?selected_area=%5B${slugs}%5D&price_min=200000&price_max=350000&bedrooms_min=2&availability=%5B%22available%22%5D&publication_date=1&sort=%22date_down%22`;
+  return `https://www.funda.nl/zoeken/koop/?selected_area=%5B${slugs}%5D&price=%22200000-350000%22&bedrooms_min=2&availability=%5B%22available%22%5D&publication_date=1&sort=%22date_down%22`;
 }
 
 function toonTab(naam, el) {

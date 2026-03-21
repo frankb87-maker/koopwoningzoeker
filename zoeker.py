@@ -18,8 +18,7 @@ def bouw_funda_url(slug):
     return (
         f"https://www.funda.nl/zoeken/koop/"
         f"?selected_area=%5B%22{slug}%22%5D"
-        f"&price_min={MIN_PRIJS}"
-        f"&price_max={MAX_PRIJS}"
+        f"&price=%22{MIN_PRIJS}-{MAX_PRIJS}%22"
         f"&bedrooms_min={MIN_SLAAPKAMERS}"
         f"&availability=%5B%22available%22%5D"
         f"&publication_date=1"
