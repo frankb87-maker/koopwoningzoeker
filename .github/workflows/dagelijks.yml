@@ -2,7 +2,7 @@ name: Dagelijkse woningzoeker
 
 on:
   schedule:
-    - cron: '0 7 * * *'   # elke dag om 07:00 NL-tijd
+    - cron: '0 7 * * *'   # elke dag om 07:00 NL-tijd (06:00 UTC)
   workflow_dispatch:        # ook handmatig starten
 
 jobs:
@@ -10,14 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Herstel de cache van gisteren (zodat we kunnen vergelijken)
+      - name: Herstel woningen cache
+        uses: actions/cache@v4
+        with:
+          path: woningen_cache.json
+          key: woningen-cache-${{ runner.os }}
+          restore-keys: |
+            woningen-cache-
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Installeer requests
+
+      - name: Installeer packages
         run: pip install requests
+
       - name: Voer zoeker uit
         env:
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO:   ${{ secrets.EMAIL_TO }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         run: python zoeker.py
+
+      # Sla de nieuwe cache op voor morgen
+      - name: Sla woningen cache op
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: woningen_cache.json
+          key: woningen-cache-${{ runner.os }}-${{ github.run_id }}
